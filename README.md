@@ -1,6 +1,6 @@
 # agency-agents 中文版（AI 智能体专家团队）
 
-🌐 **简体中文** | [繁體中文](README.zh-TW.md) | [English (upstream)](https://github.com/msitarzewski/agency-agents)
+🌐 **简体中文** | [繁體中文](README.zh-TW.md) | [English (upstream)](https://github.com/msitarzewski/agency-agents)-[原始連接](https://github.com/jnMetaCode/agency-agents-zh)
 
 > **211 个即插即用的 AI 专家角色** — 覆盖工程、设计、营销、产品、游戏、安全、金融等 18 个部门。不是通用提示词模板，每个智能体都有独立的人设、专业流程和可交付成果。支持 Claude Code / Cursor / Copilot 等 16 种 AI 编程工具。
 
