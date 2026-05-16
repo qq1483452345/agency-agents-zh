@@ -25,6 +25,7 @@
 #   workbuddy    -- 复制到 ~/.workbuddy/skills/（全局）
 #   hermes       -- 复制到 ~/.hermes/skills/（全局）
 #   kiro         -- 复制到 ~/.kiro/agents/（全局）
+#   qoder        -- 复制到 .qoder/agents/（项目级）
 #   all          -- 安装所有已检测到的工具（默认）
 #
 # Hermes 专属参数：
@@ -57,7 +58,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 INTEGRATIONS="$REPO_ROOT/integrations"
 
-ALL_TOOLS=(claude-code copilot antigravity gemini-cli opencode openclaw cursor trae aider windsurf qwen codex deerflow workbuddy hermes kiro)
+ALL_TOOLS=(claude-code copilot antigravity gemini-cli opencode openclaw cursor trae aider windsurf qwen codex deerflow workbuddy hermes kiro qoder)
 
 # --- 用法 ---
 usage() {
@@ -90,6 +91,7 @@ detect_deerflow()     { command -v deerflow >/dev/null 2>&1 || [[ -d "${HOME}/.d
 detect_workbuddy()    { command -v workbuddy >/dev/null 2>&1 || [[ -d "${HOME}/.workbuddy" ]]; }
 detect_hermes()       { command -v hermes >/dev/null 2>&1 || [[ -d "${HOME}/.hermes" ]]; }
 detect_kiro()         { command -v kiro >/dev/null 2>&1 || command -v kiro-cli >/dev/null 2>&1 || [[ -d "${HOME}/.kiro" ]]; }
+detect_qoder()        { command -v qoder >/dev/null 2>&1 || [[ -d "${HOME}/.qoder" ]]; }
 
 is_detected() {
   case "$1" in
@@ -109,6 +111,7 @@ is_detected() {
     workbuddy)   detect_workbuddy   ;;
     hermes)      detect_hermes      ;;
     kiro)        detect_kiro        ;;
+    qoder)       detect_qoder       ;;
     *)           return 1 ;;
   esac
 }
@@ -131,6 +134,7 @@ tool_label() {
     workbuddy)   printf "%-14s  %s" "WorkBuddy"    "(~/.workbuddy/skills)"  ;;
     hermes)      printf "%-14s  %s" "Hermes Agent" "(~/.hermes/skills)"     ;;
     kiro)        printf "%-14s  %s" "Kiro"         "(~/.kiro/agents)"       ;;
+    qoder)       printf "%-14s  %s" "Qoder"        "(.qoder/agents)"        ;;
   esac
 }
 
@@ -468,6 +472,25 @@ install_kiro() {
   warn "提示: 在 Kiro 中使用 '/agent swap' 切换智能体"
 }
 
+install_qoder() {
+  local src="$INTEGRATIONS/qoder/agents"
+  local dest="${PWD}/.qoder/agents"
+  local count=0
+
+  [[ -d "$src" ]] || { err "integrations/qoder 不存在。请先运行 convert.sh --tool qoder"; return 1; }
+
+  mkdir -p "$dest"
+
+  local f
+  while IFS= read -r -d '' f; do
+    cp "$f" "$dest/"
+    (( count++ )) || true
+  done < <(find "$src" -maxdepth 1 -name "*.md" -print0)
+
+  ok "Qoder: $count 个智能体 -> $dest"
+  warn "Qoder: 项目级安装。请在项目根目录运行。"
+}
+
 install_tool() {
   case "$1" in
     claude-code) install_claude_code ;;
@@ -486,6 +509,7 @@ install_tool() {
     workbuddy)   install_workbuddy   ;;
     hermes)      install_hermes      ;;
     kiro)        install_kiro        ;;
+    qoder)       install_qoder       ;;
   esac
 }
 
